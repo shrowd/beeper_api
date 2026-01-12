@@ -30,27 +30,31 @@ public class PreAuthenticationFilter extends OncePerRequestFilter {
 
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (header != null) {
-            String[] authElements = header.split(" ");
+        if (header != null && header.startsWith("Bearer ")) {
 
-            if (authElements.length == 2 && "Bearer".equals(authElements[0])) {
-                try {
-                    SecurityContextHolder.getContext().setAuthentication(
-                            userAuthenticationProvider.validateToken(authElements[1]));
-                } catch (JwtAuthenticationException e) {
-                    SecurityContextHolder.clearContext();
+            String token = header.substring(7).trim();
 
-                    response.setContentType("application/json");
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-                    Map<String, String> error = new HashMap<>();
-                    error.put("message", e.getMessage());
-                    error.put("status", "401");
-
-                    ObjectMapper mapper = new ObjectMapper();
-                    response.getWriter().write(mapper.writeValueAsString(error));
-                }
+            if (token.isEmpty()) {
+                throw new JwtAuthenticationException("JWT token is empty");
             }
+
+            try {
+                SecurityContextHolder.getContext().setAuthentication(
+                        userAuthenticationProvider.validateToken(token));
+            } catch (JwtAuthenticationException e) {
+                SecurityContextHolder.clearContext();
+
+                response.setContentType("application/json");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+                Map<String, String> error = new HashMap<>();
+                error.put("message", e.getMessage());
+                error.put("status", "401");
+
+                ObjectMapper mapper = new ObjectMapper();
+                response.getWriter().write(mapper.writeValueAsString(error));
+            }
+
         }
 
         filterChain.doFilter(request, response);

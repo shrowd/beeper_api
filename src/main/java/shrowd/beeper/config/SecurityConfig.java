@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/user/**").hasAnyAuthority("USER", "ADMIN")
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/v1/posts/**").hasAnyAuthority("USER", "ADMIN")
-                        .anyRequest().denyAll())
+                        .anyRequest().authenticated())
                 .exceptionHandling(customizer -> customizer
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .sessionManagement(c -> c
