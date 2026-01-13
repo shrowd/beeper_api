@@ -4,7 +4,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-import shrowd.beeper.dto.response.PostResponse;
 import shrowd.beeper.entity.Post;
 import shrowd.beeper.entity.User;
 import shrowd.beeper.enums.Role;
@@ -62,16 +61,6 @@ public class PostService {
         }
 
         postRepository.delete(post);
-    }
-
-    public PostResponse toResponse(Post post) {
-        return new PostResponse(
-                post.getId(),
-                post.getTitle(),
-                post.getContent(),
-                post.getAuthor().getEmail(),
-                post.getCreatedAt()
-        );
     }
 
 }
