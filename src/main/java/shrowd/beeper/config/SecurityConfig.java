@@ -36,8 +36,6 @@ public class SecurityConfig {
                 .addFilterBefore(new PreAuthenticationFilter(userAuthenticationProvider), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((request) -> request
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/user/**").hasAnyAuthority("USER", "ADMIN")
-                        .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/v1/posts/**").hasAnyAuthority("USER", "ADMIN")
                         .anyRequest().authenticated())
                 .exceptionHandling(customizer -> customizer
